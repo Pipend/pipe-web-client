@@ -1,0 +1,15 @@
+*.css
+*.js
+*.rdb
+*.sublime-workspace
+*.xml
+.DS_Store
+config.ls
+npm-debug.log
+rough
+coverage/
+migrations/
+node_modules/
+public/snapshots/
+tmp/
+dump.rdb

@@ -1,0 +1,83 @@
+{
+  "name": "pipe-web-client",
+  "version": "0.0.1",
+  "description": "Web client for importing visualizations and analysis from Pipe",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/index.ls --compilers ls:livescript",
+    "coverage": "gulp coverage",
+    "coveralls": "gulp coverage  && cat coverage/lcov.info | coveralls"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pipend/pipe-web-client.git"
+  },
+  "keywords": [
+    "pipe",
+    "web-client",
+    "plottables",
+    "visualizations",
+    "analytics",
+    "big",
+    "data"
+  ],
+  "author": "Furqan Zafar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pipend/pipe-web-client/issues"
+  },
+  "homepage": "https://github.com/pipend/pipe-web-client#readme",
+  "dependencies": {
+    "JSONStream": "^1.0.7",
+    "base62": "^1.1.0",
+    "d3": "^3.5.12",
+    "d3-tip": "^0.6.7",
+    "es6-promise": "^3.0.2",
+    "heatmap.js": "^2.0.1",
+    "highland": "^2.5.1",
+    "isomorphic-fetch": "^2.2.0",
+    "jquery-browserify": "^1.8.1",
+    "livescript": "^1.4.0",
+    "moment": "^2.10.6",
+    "nvd3": "^1.8.1",
+    "pipe-transformation": "0.0.2",
+    "prelude-extension": "0.0.7",
+    "prelude-ls": "^1.1.2",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "rx": "^4.0.7",
+    "socket.io-client": "^1.3.7",
+    "transpilation": "0.0.2",
+    "whatwg-fetch": "^0.10.1"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {},
+  "devDependencies": {
+    "brace": "git+https://github.com/furqanZafar/brace.git",
+    "brfs": "^1.4.2",
+    "browserify": "^12.0.1",
+    "browserify-shim": "^3.8.11",
+    "gulp": "^3.9.0",
+    "gulp-connect": "^2.3.1",
+    "gulp-if": "^2.0.0",
+    "gulp-livescript": "^3.0.0",
+    "gulp-livescript-istanbul": "0.0.1",
+    "gulp-mocha": "^2.2.0",
+    "gulp-streamify": "^1.0.2",
+    "gulp-stylus": "^2.2.0",
+    "gulp-util": "^3.0.7",
+    "jsdom": "^3.1.2",
+    "liveify": "^2.0.0",
+    "nib": "^1.1.0",
+    "nock": "^5.2.1",
+    "node-fetch": "^1.3.3",
+    "react-router": "^2.0.0-rc4",
+    "underscore": "^1.8.3",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.6.1"
+  }
+}
