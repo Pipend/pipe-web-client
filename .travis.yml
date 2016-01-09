@@ -12,5 +12,5 @@ addons:
 before script:
     - npm install -g gulp
 script:
-    - gulp build
+    - gulp build:src
     - npm run coveralls
