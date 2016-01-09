@@ -1,7 +1,7 @@
 Pipe web client
 ===========================
 
-[![Build Status](https://travis-ci.org/Pipend/pipe-web-client.svg?branch=0.0.3)](https://travis-ci.org/Pipend/pipe-web-client)
+[![Build Status](https://travis-ci.org/Pipend/pipe-web-client.svg?branch=master)](https://travis-ci.org/Pipend/pipe-web-client)
 [![Coverage Status](https://coveralls.io/repos/Pipend/pipe-web-client/badge.svg?branch=master&service=github)](https://coveralls.io/github/Pipend/pipe-web-client?branch=master)
 
 ## Installation
