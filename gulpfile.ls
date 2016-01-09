@@ -1,5 +1,4 @@
 require! \browserify
-# require! \./config
 require! \fs
 require! \gulp
 require! \gulp-connect
@@ -30,7 +29,7 @@ gulp.task \watch:examples:styles, ->
 
 # create-bundler :: [String] -> Bundler
 create-bundler = (entries) ->
-    bundler = browserify {} <<< watchify.args <<< {debug: config.minify, paths: <[./src ./public/components]>}
+    bundler = browserify {} <<< watchify.args <<< {debug: !config.minify, paths: <[./public/components]>}
         ..add entries
         ..transform \liveify
         ..transform \brfs

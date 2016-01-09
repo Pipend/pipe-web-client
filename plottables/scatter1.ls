@@ -3,7 +3,7 @@
 ξ = (h, f, g) --> (x) -> (f x) `h` (g x)
 
 module.exports = ({Plottable, plot-chart, d3, nv}:params) -> 
-    scatter = (require \./scatter.ls) params
+    scatter = (require \./scatter) params
     new Plottable do
         scatter.plotter
         scatter.options

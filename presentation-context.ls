@@ -5,6 +5,8 @@ require \prelude-ls
 
 # nvd3 requires d3 to be in global space
 d3 = window.d3 = require \d3
+if typeof global != \undefined
+    global.d3 = d3
 nv = require \nvd3 
 
 d3-tip = require \d3-tip

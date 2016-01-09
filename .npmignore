@@ -2,8 +2,8 @@
 .travis.yml
 .coveralls.yml
 notes
-npm-debug.log
 rough
+*.log
 *.ls
 *.styl
 *.rdb
