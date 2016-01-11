@@ -77,8 +77,8 @@ module.exports = web-client = ({end-point}:config) ->
     compile-latest-query = do ->
         cache = {}
         (branch-id) ->
-            document <- (if !!cache[query-id] then Promise.resolve cache[query-id] else load-latest-query query-id).then
-            compile-document cache[query-id] = document
+            document <- (if !!cache[branch-id] then Promise.resolve cache[branch-id] else load-latest-query branch-id).then
+            compile-document cache[branch-id] = document
 
     # compile-presentation-sync :: String -> String -> [Error, (Parameters -> DOMElement -> result -> Void)]
     compile-presentation-sync = (presentation, language) -> 

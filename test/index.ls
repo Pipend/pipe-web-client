@@ -114,6 +114,18 @@ nock \http://pipe.com/apis/
         transpilation-language == pipe-document.transpilation.query
     .reply 200, result-with-meta
 
+    .get \/branches/psLxTYL
+    .reply 200, [branch]
+
+    .get \/queries/pyTpkXM
+    .reply 200, pipe-document
+
+    .post \/execute, ({data-source-cue, query, transpilation-language}) ->
+        data-source-cue `is-equal-to-object` pipe-document.data-source-cue and
+        query == pipe-document.query and 
+        transpilation-language == pipe-document.transpilation.query
+    .reply 200, result-with-meta
+
 # setup jsdom, mock browser environment
 require! \jsdom
 global <<< 
@@ -123,8 +135,10 @@ global <<<
 
 Promise = require \bluebird
 {is-equal-to-object} = require \prelude-extension
-{load-query, load-latest-query, load-default-document, get-all-tags, execute,
-compile-query, compile-latest-query} = (require \../index.ls) end-point: \http://pipe.com
+{
+    load-query, load-latest-query, load-default-document, get-all-tags,
+    execute, compile-query, compile-latest-query
+} = (require \../index.ls) end-point: \http://pipe.com
 
 describe \pipe-web-client, ->
 
@@ -165,3 +179,11 @@ describe \pipe-web-client, ->
         presentation-function view, result, {}
         if (view.innerHTML.index-of \<pre>) == 0 then Promise.resolve null else Promise.reject \invalid-dom
 
+    specify \compile-latest-query, ->
+        view = document.create-element \div
+        {execute, transformation-function, presentation-function} <- compile-latest-query \psLxTYL .then
+        result <- execute false, {} .then
+        <- (assert-object-equality result, result-with-meta.result).then
+        <- (assert-object-equality result, (transformation-function result, {})).then
+        presentation-function view, result, {}
+        if (view.innerHTML.index-of \<pre>) == 0 then Promise.resolve null else Promise.reject \invalid-dom
