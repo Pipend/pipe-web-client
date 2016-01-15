@@ -52,6 +52,8 @@ module.exports = web-client = ({end-point}:config) ->
         
             cache[query-id] = 
 
+                document: document
+
                 # execute :: Boolean -> Parameters -> p result
                 execute: (cache, compiled-parameters) --> 
 

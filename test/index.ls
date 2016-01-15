@@ -140,6 +140,8 @@ Promise = require \bluebird
     execute, compile-query, compile-latest-query
 } = (require \../index.ls) end-point: \http://pipe.com
 
+pretty = -> JSON.stringify it, null, 4
+
 describe \pipe-web-client, ->
 
     # assert-object-equality :: Document -> Document -> p String?
@@ -172,12 +174,15 @@ describe \pipe-web-client, ->
 
     specify \compile-query, ->
         view = document.create-element \div
-        {execute, transformation-function, presentation-function} <- compile-query \pyTpkXM .then
-        result <- execute false, {} .then
-        <- (assert-object-equality result, result-with-meta.result).then
-        <- (assert-object-equality result, (transformation-function result, {})).then
-        presentation-function view, result, {}
-        if (view.innerHTML.index-of \<pre>) == 0 then Promise.resolve null else Promise.reject \invalid-dom
+        {execute, transformation-function, presentation-function, document} <- compile-query \pyTpkXM .then
+        if document `is-equal-to-object` pipe-document
+            result <- execute false, {} .then
+            <- (assert-object-equality result, result-with-meta.result).then
+            <- (assert-object-equality result, (transformation-function result, {})).then
+            presentation-function view, result, {}
+            if (view.innerHTML.index-of \<pre>) == 0 then Promise.resolve null else Promise.reject \invalid-dom
+        else
+            Promise.reject "document mismatch #{pretty document} does not match #{pretty pipe-document}"
 
     specify \compile-latest-query, ->
         view = document.create-element \div
