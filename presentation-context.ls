@@ -1,7 +1,8 @@
 # the first require is used by browserify to import the prelude-ls module
 # the second require is defined in the prelude-ls module and exports the object
 require \prelude-ls
-{Obj, Str, id, any, average, concat-map, drop, each, filter, find, foldr1, foldl, map, maximum, minimum, obj-to-pairs, pairs-to-obj, sort, sum, tail, take, unique} = require \prelude-ls
+{Obj, Str, id, any, average, concat-map, drop, each, filter, find, foldr1, foldl, 
+map, maximum, minimum, obj-to-pairs, pairs-to-obj, sort, sum, tail, take, unique} = require \prelude-ls
 
 # nvd3 requires d3 to be in global space
 d3 = window.d3 = require \d3
@@ -9,7 +10,7 @@ if typeof global != \undefined
     global.d3 = d3
 nv = require \nvd3 
 
-d3-tip = require \d3-tip
+require! \d3-tip
 d3-tip d3
 
 {fill-intervals, rextend} = require \./plottables/_utils
@@ -76,9 +77,7 @@ project = (f, p) -->
 
 # json :: View -> result -> DOM()
 json = (view, result) ->
-    pre = $ "<pre/>"
-        ..text JSON.stringify result, null, 4
-    ($ view).append pre
+    view.innerHTML = "<pre>#{JSON.stringify result, null, 4}</pre>"
 
 # csv :: View -> result -> DOM()
 csv = (view, result) ->
@@ -101,7 +100,9 @@ csv = (view, result) ->
 
 # plot-chart :: View -> result -> Chart -> DOM()
 plot-chart = (view, result, chart) !->
-    d3.select view .append \div .attr \style, "position: absolute; left: 0px; top: 0px; width: 100%; height: 100%" .append \svg .datum result .call chart        
+    d3.select view 
+        .append \div .attr \style, "position: absolute; left: 0px; top: 0px; width: 100%; height: 100%" 
+        .append \svg .datum result .call chart
 
 plottables = {
     pjson: new Plottable do

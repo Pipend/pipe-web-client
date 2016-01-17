@@ -1,7 +1,8 @@
-module.exports = ({Plottable, nv, d3, plot-chart}:params) -> 
-    timeseries = (require \./timeseries) params
+module.exports = ({Plottable, nv, d3}:params) -> 
+    {plotter, options, continuations, projection} = (require \./timeseries) params
     new Plottable do
-        timeseries.plotter
-        timeseries.options
-        timeseries.continuations
-        (data, options) -> [{key: "", values: data}] |> ((fdata) -> timeseries.projection fdata, options)
+        plotter
+        options
+        continuations
+        (data, options) -> 
+            [{key: "", values: data}] |> ((fdata) -> projection fdata, options)

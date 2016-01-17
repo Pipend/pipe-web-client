@@ -1,7 +1,7 @@
-module.exports = ({Plottable, nv, plot-chart}:params) -> 
-    histogram = (require \./histogram) params
+module.exports = ({Plottable, nv}:params) -> 
+    {plotter, options, continuations, projection} = (require \./histogram) params
     new Plottable do
-        histogram.plotter
-        histogram.options
-        histogram.continuations
-        (data, options) -> [{key: "", values: data}] |> ((fdata) -> histogram.projection fdata, options)
+        plotter
+        options
+        continuations
+        (data, options) -> [{key: "", values: data}] |> ((fdata) -> projection fdata, options)

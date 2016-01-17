@@ -54,7 +54,7 @@ gulp.task \build:examples:scripts, ->
 
 gulp.task \watch:examples:scripts, ->
     examples-bundler.on \update, -> bundle-examples!
-    examples-bundler.on \time, (time) -> gulp-util.log "App.js built in #{time} seconds"
+    examples-bundler.on \time, (time) -> gulp-util.log "App.js built in #{time / 1000} seconds"
 
 gulp.task \build:src:styles, ->
     gulp.src <[./index.styl]>

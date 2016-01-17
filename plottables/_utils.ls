@@ -6,7 +6,6 @@ export fill-intervals = fill-intervals
 
 # v :: [[x, y]] -> [[x, <y>]]
 export trend-line = (v, sample-size) ->
-
     [0 to v.length - sample-size]
         |> map (i)->
             new-y = [i til i + sample-size] 

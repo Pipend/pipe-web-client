@@ -2,68 +2,42 @@
 {fill-intervals} = require \./_utils
 fill-intervals-f = fill-intervals
 
-module.exports = ({Plottable, nv, plot-chart}) -> new Plottable do 
-    (view, result, {x, y, key, values, y-axis, x-axis, transition-duration, reduce-x-ticks, rotate-labels, show-controls, group-spacing, show-legend, fill-intervals, margin, color}, continuation) !-->
+module.exports = ({Plottable, nv, plot-chart}:params) ->
+    {plotter, options} = (require \./nv-template) params
+    new Plottable do
+        plotter do
+            # [a] -> Options -> [b]
+            (items, {fill-intervals, x, y}) ->
+                items 
+                    |> map -> [(x it), (y it)]
+                    |> ->
+                        if fill-intervals is not false 
+                            fill-intervals-f do 
+                                it
+                                if fill-intervals is true then 0 else fill-intervals
+                        else
+                            it
 
-        <- nv.add-graph
+            # Map String, NVModel -> NVModel
+            (.multi-bar-chart)
 
-        result := result |> map (r) -> {
-            key: (key r)
-            values: (values r) |> (map (d) -> [(x d), (y d)]) |> if fill-intervals is not false then (-> fill-intervals-f it, if fill-intervals is true then 0 else fill-intervals) else id
-            color: (color r)
-        }
+            # Chart -> DOMElement -> [Series] -> Options -> Void
+            (chart, view, result, options) !->
+                {group-spacing, reduce-x-ticks, rotate-labels, show-controls, show-legend, transition-duration} = options
+                chart
+                    .x (.0)
+                    .y (.1)
+                    .duration transition-duration
+                    .group-spacing group-spacing
+                    .reduce-x-ticks reduce-x-ticks
+                    .rotate-labels rotate-labels
+                    .show-controls show-controls
+                    .show-legend show-legend
 
-
-        chart = nv.models.multi-bar-chart!
-            .x (.0)
-            .y (.1)
-            .duration transition-duration
-            .reduce-x-ticks reduce-x-ticks
-            .rotate-labels rotate-labels
-            .show-controls show-controls
-            .group-spacing group-spacing
-            .show-legend show-legend
-            
-            
-        chart 
-            ..x-axis.tick-format x-axis.format
-            ..y-axis.tick-format y-axis.format
-            ..margin margin
-
-
-        [
-            [x-axis.label, (.x-axis.axis-label)]
-            [x-axis.distance, (.x-axis.axis-label-distance)]
-            [y-axis.label, (.y-axis.axis-label)]
-            [y-axis.distance, (.y-axis.axis-label-distance)]
-        ] |> each ([prop, f]) ->
-            if prop is not  null
-                (f chart) prop
-
-        <- continuation chart, result
-
-        plot-chart view, result, chart
-        
-    {
-        key: (.key)
-        values: (.values)
-        x: (.0)
-        y: (.1)
-        y-axis:
-            format: id
-            label: null
-            distance: null
-        x-axis:
-            format: id
-            label: null
-            distance: null
-        transition-duration: 300
-        reduce-x-ticks: false # If 'false', every single x-axis tick label will be rendered.
-        rotate-labels: 0 # Angle to rotate x-axis labels.
-        show-controls: true
-        group-spacing: 0.1 # Distance between each group of bars.
-        show-legend: true
-        fill-intervals: false
-        margin: {top: 20, right:20, bottom: 50, left: 50}  # {top left right bottom}
-        color: (.color)
-    }
+        {} <<< options <<<
+            group-spacing: 0.1 # Distance between each group of bars.
+            reduce-x-ticks: false # If 'false', every single x-axis tick label will be rendered.
+            rotate-labels: 0 # Angle to rotate x-axis labels.
+            show-controls: true
+            show-legend: true
+            transition-duration: 300
