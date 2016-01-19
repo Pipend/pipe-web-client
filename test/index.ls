@@ -126,6 +126,12 @@ nock \http://pipe.com/apis/
         transpilation-language == pipe-document.transpilation.query
     .reply 200, result-with-meta
 
+    .post \/save, (document) -> document `is-equal-to-object` pipe-document
+    .reply 200, pipe-document
+
+    .post \/save, (document) -> document `is-equal-to-object` pipe-document
+    .reply 500, queries-in-between: [\pyTpkXM]
+
 # setup jsdom, mock browser environment
 require! \jsdom
 global <<< 
@@ -137,7 +143,7 @@ Promise = require \bluebird
 {is-equal-to-object} = require \prelude-extension
 {
     load-query, load-latest-query, load-default-document, get-all-tags,
-    execute, compile-query, compile-latest-query
+    execute, compile-query, compile-latest-query, save-document
 } = (require \../index.ls) end-point: \http://pipe.com
 
 pretty = -> JSON.stringify it, null, 4
@@ -192,3 +198,24 @@ describe \pipe-web-client, ->
         <- (assert-object-equality result, (transformation-function result, {})).then
         presentation-function view, result, {}
         if (view.innerHTML.index-of \<pre>) == 0 then Promise.resolve null else Promise.reject \invalid-dom
+
+    specify \save-document, ->
+        document <- save-document pipe-document .then _
+        <- (do -> 
+            if document `is-equal-to-object` pipe-document 
+                Promise.resolve null 
+            else 
+                Promise.reject "document mismatch") .then _
+
+        (save-document pipe-document) 
+            .catch (err) -> 
+                expected-error = queries-in-between: [\pyTpkXM]
+                if (JSON.parse err) `is-equal-to-object` expected-error
+                    Promise.resolve null 
+                else 
+                    Promise.reject "expected error: #{JSON.stringify expected-error}"
+            .then (result) ->
+                if result == null 
+                    Promise.resolve null 
+                else 
+                    Promise.reject "expected result to be null instead of #{result}"

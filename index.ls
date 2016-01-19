@@ -10,9 +10,16 @@ require! \./presentation-context
 (require \es6-promise).polyfill!
 require \isomorphic-fetch 
 
+# process-response :: Response -> p a
+process-response = ({ok}:res) ->
+    if !ok then 
+        res.text!.then (text) -> throw text
+    else
+        res.json!
+
 # get-json :: String -> p result
 get-json = (url) -> 
-    fetch url .then (.json!)
+    fetch url .then process-response
 
 # post-json :: String -> object -> p result
 post-json = (url, json) --> 
@@ -20,8 +27,8 @@ post-json = (url, json) -->
         url
         method: \POST
         headers: 'Content-Type' : \application/json
-        body: JSON.stringify json) .then (.json!)
-    
+        body: JSON.stringify json) .then process-response
+        
 module.exports = web-client = ({end-point}:config) ->
 
     # compile-document :: Document -> p {execute, transformation-function, presentation-function}
@@ -59,7 +66,14 @@ module.exports = web-client = ({end-point}:config) ->
 
                     op-info = document
 
-                    {result}? <- (execute data-source-cue, query, transpilation.query, compiled-parameters, cache, generate-uid!, op-info) .then _
+                    {result}? <- (execute do 
+                        data-source-cue
+                        query
+                        transpilation.query
+                        compiled-parameters
+                        cache
+                        generate-uid!
+                        op-info) .then _
                     result
 
                 # transform :: result -> Parameters -> p result
@@ -104,10 +118,19 @@ module.exports = web-client = ({end-point}:config) ->
                     res {from-cache: true, execution-duration: 0, execution-end-time, result}
 
             else
-                (post-json "#{end-point}/apis/execute", {data-source-cue, query, transpilation-language, compiled-parameters, cache, op-id, op-info})
-                    .then (result-with-metadata) -> 
-                        previous-call := {args, result-with-metadata}
-                        result-with-metadata
+                (
+                    post-json "#{end-point}/apis/execute", {
+                        data-source-cue
+                        query
+                        transpilation-language
+                        compiled-parameters
+                        cache
+                        op-id
+                        op-info
+                    }
+                ) .then (result-with-metadata) -> 
+                    previous-call := {args, result-with-metadata}
+                    result-with-metadata
 
     # generate-uid :: a -> String
     generate-uid = -> base62.encode Date.now!
@@ -153,7 +176,7 @@ module.exports = web-client = ({end-point}:config) ->
                     document.head.append-child element
 
     # save-document :: Document -> p Document
-    save-document = post-json \/apis/save
+    save-document = post-json "#{end-point}/apis/save"
     
     {} <<< transpilation <<< pipe-transformation <<< {
         compile-presentation
