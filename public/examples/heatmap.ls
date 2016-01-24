@@ -25,7 +25,7 @@ data =
 func = plot heatmap `with-options` {
     width: 850
     height: 300
-    background: \black
+    background-color: \black
 }
 
 [data, func]

@@ -2,16 +2,17 @@
 
 module.exports = ({Plottable, d3, plot-chart, nv, plot}) ->
 
-    layout = (direction, cells) --> 
+    # layout :: String -> [Cell] | (Cell -> Cell -> ...) -> Void
+    layout = (direction, cells) -> 
         if "Array" != typeof! cells
             cells := drop 1, [].slice.call arguments
 
         new Plottable (view, result, options, continuation) !-->
             child-view-sizes = cells |> map ({size, plotter}) ->
                     child-view = document.create-element \div
-                        ..style <<< {                            
+                        ..style <<< {
                             overflow: \auto
-                            position: \absolute   
+                            position: \absolute
                         }
                         ..class-name = direction
                     view.append-child child-view
@@ -37,9 +38,7 @@ module.exports = ({Plottable, d3, plot-chart, nv, plot}) ->
                         width: if direction == \horizontal then "#{size * 100}%" else "100%"
                         height: if direction == \horizontal then "100%" else "#{size * 100}%"
                     }
-                    plot plotter, child-view, result
-
-
+                    plot plotter, child-view, result, options
 
     # wraps a Plottable in a cell (used in layout)
     cell: (plotter) -> {plotter}
@@ -47,6 +46,8 @@ module.exports = ({Plottable, d3, plot-chart, nv, plot}) ->
     # wraps a Plottable in cell that has a size (used in layout)
     scell: (size, plotter) --> {size, plotter}
 
-    layout-horizontal: layout \horizontal
+    # layout-horizontal :: Cell -> Cell -> Cell -> ... -> Void
+    layout-horizontal: -> layout.apply @, <[horizontal]> ++ ([].slice.call arguments)
 
-    layout-vertical: layout \vertical
+    # layout-vertical :: Cell -> Cell -> Cell -> ... -> Void
+    layout-vertical: -> layout.apply @, <[vertical]> ++ ([].slice.call arguments)

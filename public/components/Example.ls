@@ -120,7 +120,7 @@ module.exports = React.create-class do
         else
             try 
                 [data, presentation-function] = result
-                presentation-function view, data, {}
+                presentation-function view, data, {x: 1, y: 1} # dummy params for testing
             catch err 
                 @set-state err: "EXECUTION ERROR : #{err.to-string!}"
 

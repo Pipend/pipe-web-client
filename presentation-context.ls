@@ -126,11 +126,15 @@ plottables = {
     multi-chart: (require \./plottables/multi-chart) {Plottable, d3, nv, plot-chart, plot}
     funnel: (require \./plottables/funnel) {Plottable, d3, nv, plot-chart, plot}
     funnel1: (require \./plottables/funnel1) {Plottable, d3}
-} <<< (require \./plottables/layout) {Plottable, d3, nv, plot-chart, plot}
+} 
+
+{layout-horizontal, layout-vertical} = layout-plottables = (require \./plottables/layout) {Plottable, d3, nv, plot-chart, plot}
+    ..layout-horizontal = -> (layout-horizontal ...) `with-options` id
+    ..layout-vertical = -> (layout-vertical ...) `with-options` id
 
 # all functions defined here are accessibly by the presentation code
 module.exports = ->
-    {} <<< plottables <<< {
+    {} <<< plottables <<< layout-plottables <<< {
         Plottable
         plot
         plottable

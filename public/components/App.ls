@@ -10,7 +10,7 @@ Route = create-factory react-router.Route
 Router = create-factory react-router.Router
 Example = create-factory require \./Example.ls
 
-examples = 
+examples =
   * title: 'correlation-matrix'
     description: ""
     languages:
@@ -66,7 +66,11 @@ examples =
   * title: "timeseries1"
     description: ""
     languages:
-        ls: fs.read-file-sync \public/examples/timeseries1.ls, \utf8 
+        ls: fs.read-file-sync \public/examples/timeseries1.ls, \utf8
+  * title: "layout"
+    description: ""
+    languages:
+        ls: fs.read-file-sync \public/examples/layout.ls, \utf8 
   ...
 
 App = create-class do
