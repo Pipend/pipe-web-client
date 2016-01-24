@@ -8,23 +8,27 @@ data :: [{
 }]
 '''
 data = 
-    * type: \bar
-      y-axis: 1
-      key: \square
-      values: [0 til 30] |> map -> 
-        [Date.now! + (it * 86400000), it * it]
-      
+  * type: \bar
+    y-axis: 1
+    key: \square
+    values: [0 til 30] |> map -> 
+      [Date.now! + (it * 86400000), it * it]
+    
 
-    * type: \line
-      y-axis: 2
-      key: \line
-      values: [0 til 30] |> map -> 
-        [Date.now! + (it * 86400000), it * 20]
-      color: \orange
+  * type: \line
+    y-axis: 2
+    key: \line
+    values: [0 til 30] |> map -> 
+      [Date.now! + (it * 86400000), it * 20]
+    color: \orange
 
-## the right hand side is what goes in the presentation layer
+
 func = plot layout-vertical do 
-    cell pjson
+    scell do
+        0.6
+        layout-vertical do 
+            cell table
+            cell table
     cell multi-chart `with-options` {
         margin:
             left: 80
@@ -38,4 +42,14 @@ func = plot layout-vertical do
             label: \growth
     }
 
-[data, func]
+[
+    data
+    (view, result, parameters) ->
+        func view, result, parameters
+        <- set-timeout _, 3000 
+        func do 
+            view
+            result |> map ({values}:item) -> 
+                {} <<< item <<< values: (values |> take 3)
+            parameters
+]
