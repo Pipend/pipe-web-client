@@ -1,6 +1,6 @@
 {
   "name": "pipe-web-client",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Web client for importing visualizations and analysis from Pipe",
   "main": "index.js",
   "scripts": {
