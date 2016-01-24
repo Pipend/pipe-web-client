@@ -75,7 +75,6 @@ module.exports = ({Plottable, d3, plot-chart, nv, plot}) ->
                         |> map (.size)
                         |> sum
 
-                    div key: "cell_#{i}", \apple
                     # a div for each cell
                     Cell do
                         {
