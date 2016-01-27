@@ -64,7 +64,7 @@ module.exports = web-client = ({end-point}:config) ->
                 # execute :: Boolean -> Parameters -> p result
                 execute: (cache, compiled-parameters) --> 
 
-                    op-info = document
+                    op-info = {document}
 
                     {result}? <- (execute do 
                         data-source-cue

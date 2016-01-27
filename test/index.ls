@@ -108,10 +108,11 @@ nock \http://pipe.com/apis/
     .get \/queries/pyTpkXM
     .reply 200, pipe-document
 
-    .post \/execute, ({data-source-cue, query, transpilation-language}) ->
+    .post \/execute, ({data-source-cue, query, transpilation-language, op-info}) ->
         data-source-cue `is-equal-to-object` pipe-document.data-source-cue and
         query == pipe-document.query and 
-        transpilation-language == pipe-document.transpilation.query
+        transpilation-language == pipe-document.transpilation.query and 
+        pipe-document `is-equal-to-object` op-info.document
     .reply 200, result-with-meta
 
     .get \/branches/psLxTYL
