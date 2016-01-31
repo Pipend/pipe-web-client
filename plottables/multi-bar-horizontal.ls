@@ -4,13 +4,16 @@ module.exports = ({Plottable, d3, plot-chart, nv}:params) ->
     {plotter, options} = (require \./nv-template) params
     new Plottable do
         plotter do
-            # [a] -> Options -> [b]
-            (items, {x, y}) -> items |> map -> x: (x it), y: (y it)
+            # RefinedSeries :: {key :: String, values :: [a], color :: String, ...}
+            # [RefinedSeries] -> Options -> [ProjectedSeries]
+            (refined-series, {x, y}) -> 
+                refined-series |> map ({values}:series) -> {} <<< series <<< 
+                    values: values |> map -> x: (x it), y: (y it)
 
             # Map String, NVModel -> NVModel
             (.multi-bar-horizontal-chart)
 
-            # Chart -> DOMElement -> [Series] -> Options -> Void
+            # Chart -> DOMElement -> [SeriesWithTrendline] -> Options -> Void
             (chart, , , {show-values, show-controls, stacked}) !->
                 chart
                     .show-controls show-controls

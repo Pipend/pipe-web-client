@@ -5,14 +5,17 @@ module.exports = ({Plottable, nv, plot-chart}:params) ->
     {plotter, options} = (require \./nv-template) params
     new Plottable do
         plotter do
-            # [a] -> Options -> [b]
-            (items, {x, y}) -> items |> map -> x: (x it), y: (y it)
+            # RefinedSeries :: {key :: String, values :: [a], color :: String, ...}
+            # [RefinedSeries] -> Options -> [ProjectedSeries]
+            (refined-series, {x, y}) -> 
+                refined-series |> map ({values}:series) -> {} <<< series <<< 
+                    values: values |> map -> x: (x it), y: (y it)
 
             # Map String, NVModel -> NVModel
             (.multi-chart)
 
-            # Chart -> DOMElement -> [Series] -> Options -> Void
-            (chart, view, result, {y-axis1, y-axis2}) !->
+            # Chart -> DOMElement -> [SeriesWithTrendline] -> Options -> ()
+            (chart, view, , {y-axis1, y-axis2}) !->
                 [
                     [(.y-axis1.tick-format), y-axis1.format]
                     [(.y-axis1.axis-label), y-axis1.label]
