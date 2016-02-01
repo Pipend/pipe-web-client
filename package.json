@@ -1,6 +1,6 @@
 {
   "name": "pipe-web-client",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Web client for importing visualizations and analysis from Pipe",
   "main": "index.js",
   "scripts": {
@@ -38,10 +38,10 @@
     "livescript": "^1.4.0",
     "moment": "^2.10.6",
     "nvd3": "^1.8.1",
-    "pipe-transformation": "^0.0.4",
-    "prelude-extension": "^0.0.8",
+    "pipe-transformation": "latest",
+    "prelude-extension": "latest",
     "prelude-ls": "^1.1.2",
-    "transpilation": "^0.0.4",
+    "transpilation": "latest",
     "whatwg-fetch": "^0.10.1"
   },
   "peerDependencies": {
