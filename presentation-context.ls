@@ -126,6 +126,7 @@ plottables = {
     multi-chart: (require \./plottables/multi-chart) {Plottable, d3, nv, plot-chart, plot}
     funnel: (require \./plottables/funnel) {Plottable, d3, nv, plot-chart, plot}
     funnel1: (require \./plottables/funnel1) {Plottable, d3}
+    radar: (require \./plottables/radar) {Plottable, d3}
 } 
 
 {layout-horizontal, layout-vertical} = layout-plottables = (require \./plottables/layout) {Plottable, d3, nv, plot-chart, plot}

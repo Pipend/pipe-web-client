@@ -19,6 +19,10 @@ examples =
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/funnel.ls, \utf8
+  * title: 'radar'
+    description: ""
+    languages:
+        ls: fs.read-file-sync \public/examples/radar.ls, \utf8      
   * title: 'heatmap'
     description: ""
     languages:
