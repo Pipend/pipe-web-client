@@ -1,6 +1,6 @@
 {
   "name": "pipe-web-client",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Web client for importing visualizations and analysis from Pipe",
   "main": "index.js",
   "scripts": {
@@ -35,7 +35,6 @@
     "heatmap.js": "^2.0.1",
     "isomorphic-fetch": "^2.2.0",
     "jquery-browserify": "^1.8.1",
-    "livescript": "^1.4.0",
     "moment": "^2.10.6",
     "nvd3": "^1.8.1",
     "pipe-transformation": "latest",

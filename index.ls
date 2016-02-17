@@ -1,5 +1,4 @@
 require! \base62
-{compile} = require \livescript
 {keys, last, map, Str} = require \prelude-ls
 {is-equal-to-object} = require \prelude-extension
 require! \./presentation-context
