@@ -2,9 +2,10 @@ require! \fs
 {concat-map, drop, filter, find, fold, group-by, id, keys, last, map, Obj, obj-to-pairs, 
 pairs-to-obj, reject, reverse, Str, sort-by, take, unique,  unique-by, values, zip-with} = require \prelude-ls
 {partition-string} = require \prelude-extension
-{create-class, create-factory, DOM:{a, button, div, form, h1, h2, img, input, li, ol, option, span, ul}}:React = require \react
+{create-class, create-factory, DOM:{a, button, div, form, h1, h2, img, input, li, ol, option, span, ul, label}}:React = require \react
 {find-DOM-node, render} = require \react-dom
 require! \react-router
+{hash-history} = react-router
 Link = create-factory react-router.Link
 Route = create-factory react-router.Route
 Router = create-factory react-router.Router
@@ -15,6 +16,7 @@ examples =
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/correlation-matrix.ls, \utf8
+        babel: fs.read-file-sync \public/examples/correlation-matrix.js, \utf8
   * title: 'funnel'
     description: ""
     languages:
@@ -89,11 +91,23 @@ App = create-class do
     render: -> 
         # APP
         div class-name: \app,
-            
+
+            div class-name: 'languages',
+                [['ls', 'LiveScript'], ['babel', 'Babel']] |> map ([abbr, title]) ~>
+                    div do 
+                        key: abbr 
+                        input type: 'radio', name: 'language-abbr', id: abbr, checked: abbr == @props.location.query.lang, on-change: ~>
+                            hash-history.replace do 
+                                pathname: @props.location.pathname
+                                query: {} <<< @props.location.query <<< {lang: abbr}
+                                state: @state
+
+                        label html-for: abbr, title
+
             # EXAMPLES
             div class-name: \examples,
                 examples |> map ({title, description, {jsx, ls}:languages}) ~>
-                    key = "#{title.to-lower-case!.replace /\s+/g, '-'}"
+                    key = "#{title.to-lower-case!.replace /\s+/g, '_'}"
 
                     # EXAMPLE
                     Example do 
@@ -104,7 +118,8 @@ App = create-class do
                         width: 850
                         style:
                             margin-bottom: 60
-                        initial-language-abbr: \ls
+                        language-abbr: @state[key] ? @props.location.query.lang ? \babel
+                        on-language-abbr-changed: (lang) ~> @set-state "#key": lang
                         languages: languages
                             |> obj-to-pairs
                             |> map ([abbr, initial-content]) ->
@@ -129,6 +144,8 @@ App = create-class do
     # changing the query string manually, or clicking on a different example
     # component-did-update :: Props -> Void
     component-did-update: (prev-props) !-> @scroll-to-example!
+
+    get-initial-state: -> {}
 
 render do 
     Router do 
