@@ -16,15 +16,17 @@ examples =
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/correlation-matrix.ls, \utf8
-        babel: fs.read-file-sync \public/examples/correlation-matrix.js, \utf8
+        # babel: fs.read-file-sync \public/examples/correlation-matrix.js, \utf8
   * title: 'funnel'
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/funnel.ls, \utf8
+        babel: fs.read-file-sync \public/examples/funnel.js, \utf8
   * title: 'radar'
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/radar.ls, \utf8      
+        babel: fs.read-file-sync \public/examples/radar.js, \utf8      
   * title: 'heatmap'
     description: ""
     languages:

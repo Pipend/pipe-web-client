@@ -1,3 +1,4 @@
+_ <- id
 ## this is the data structure required by funnel
 ## data :: [{name :: String, size :: Number}]
 data = 
