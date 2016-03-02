@@ -16,7 +16,7 @@ examples =
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/correlation-matrix.ls, \utf8
-        # babel: fs.read-file-sync \public/examples/correlation-matrix.js, \utf8
+        babel: fs.read-file-sync \public/examples/correlation-matrix.js, \utf8
   * title: 'funnel'
     description: ""
     languages:
@@ -31,54 +31,67 @@ examples =
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/heatmap.ls, \utf8
+        babel: fs.read-file-sync \public/examples/heatmap.js, \utf8
   * title: 'histogram'
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/histogram.ls, \utf8
+        babel: fs.read-file-sync \public/examples/histogram.js, \utf8
   * title: 'histogram1'
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/histogram1.ls, \utf8
+        babel: fs.read-file-sync \public/examples/histogram1.js, \utf8
   * title: 'multi-bar-horizontal'
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/multi-bar-horizontal.ls, \utf8 
+        babel: fs.read-file-sync \public/examples/multi-bar-horizontal.js, \utf8 
   * title: 'multi chart'
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/multi-chart.ls, \utf8 
+        babel: fs.read-file-sync \public/examples/multi-chart.js, \utf8 
   * title: \regression
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/regression.ls, \utf8 
+        babel: fs.read-file-sync \public/examples/regression.js, \utf8 
   * title: "scatter"
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/scatter.ls, \utf8 
+        babel: fs.read-file-sync \public/examples/scatter.js, \utf8 
   * title: "scatter1"
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/scatter1.ls, \utf8 
+        babel: fs.read-file-sync \public/examples/scatter1.js, \utf8 
   * title: "stacked-area"
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/stacked-area.ls, \utf8 
+        babel: fs.read-file-sync \public/examples/stacked-area.js, \utf8 
   * title: "table"
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/table.ls, \utf8 
+        babel: fs.read-file-sync \public/examples/table.js, \utf8 
   * title: "timeseries"
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/timeseries.ls, \utf8 
+        babel: fs.read-file-sync \public/examples/timeseries.js, \utf8 
   * title: "timeseries1"
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/timeseries1.ls, \utf8
+        babel: fs.read-file-sync \public/examples/timeseries1.js, \utf8
   * title: "layout"
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/layout.ls, \utf8 
+        babel: fs.read-file-sync \public/examples/layout.js, \utf8 
   ...
 
 App = create-class do
@@ -92,13 +105,16 @@ App = create-class do
     # render :: () -> ReactElement
     render: -> 
         # APP
+
+        default-snippets-lang = @props.location.query.lang ? \babel
+
         div class-name: \app,
 
             div class-name: 'languages',
                 [['ls', 'LiveScript'], ['babel', 'Babel']] |> map ([abbr, title]) ~>
                     div do 
                         key: abbr 
-                        input type: 'radio', name: 'language-abbr', id: abbr, checked: abbr == @props.location.query.lang, on-change: ~>
+                        input type: 'radio', name: 'language-abbr', id: abbr, checked: abbr == default-snippets-lang, on-change: ~>
                             hash-history.replace do 
                                 pathname: @props.location.pathname
                                 query: {} <<< @props.location.query <<< {lang: abbr}
@@ -120,7 +136,7 @@ App = create-class do
                         width: 850
                         style:
                             margin-bottom: 60
-                        language-abbr: @state[key] ? @props.location.query.lang ? \babel
+                        language-abbr: @state[key] ? default-snippets-lang
                         on-language-abbr-changed: (lang) ~> @set-state "#key": lang
                         languages: languages
                             |> obj-to-pairs
@@ -145,7 +161,9 @@ App = create-class do
 
     # changing the query string manually, or clicking on a different example
     # component-did-update :: Props -> Void
-    component-did-update: (prev-props) !-> @scroll-to-example!
+    component-did-update: (prev-props) !-> 
+        if prev-props.location.query.example != @props.location.query.example
+            @scroll-to-example!
 
     get-initial-state: -> {}
 

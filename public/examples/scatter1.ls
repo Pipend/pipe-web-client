@@ -1,6 +1,8 @@
+_ <- id
+
 shapes = ['circle', 'cross', 'triangle-up', 'triangle-down', 'diamond', 'square']
 
-## this is the data structure required by scatter1
+## Data structure required by scatter1
 ## data :: [{x :: Number, y :: Number, size :: Int, shape :: String}]
 data = [0 til 15] |> map -> 
     x: Math.floor Math.random! * 100
@@ -8,7 +10,8 @@ data = [0 til 15] |> map ->
     size: it
     shape: shapes[it % (shapes.length - 1)]
 
-## the right hand side is what goes in the presentation layer
+## Presentation snippet
+
 func = plot scatter1 `with-options` {
     margin:
         left: 80

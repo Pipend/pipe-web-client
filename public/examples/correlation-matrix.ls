@@ -1,6 +1,6 @@
 _ <- id
-## this is the data structure required by correlation-matrix
-## data :: [Map String, Number]
+## Data structure required by correlation-matrix
+## data :: [{a: Number}]
 data = [0 til 30] |> map -> 
     sepal-length: Math.random! * 30
     sepal-width: Math.random! * 30

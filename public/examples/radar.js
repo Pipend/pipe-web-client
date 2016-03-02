@@ -1,5 +1,5 @@
 _ => {
-  // this is the data structure required by funnel
+  // Data structure required by funnel
   // data :: [{name :: String, size :: Number}]
   data = [
     {
@@ -43,7 +43,9 @@ _ => {
     }
   ]
 
-  // the right hand side is what goes in the presentation layer
+  // Presentation snipet
+  
   const func = plot(radar)
+
   return [data, func]
 }

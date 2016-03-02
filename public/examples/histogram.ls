@@ -1,10 +1,12 @@
-## this is the data structure required by histogram
-''' 
+_ <- id
+/* 
+Data structure required by histogram:
+
 data :: [{
     key :: String
     values :: [[Number, Number]]
 }]
-'''
+*/
 data = 
     * key: \square
       values: [0 til 30] |> map -> 
@@ -14,7 +16,7 @@ data =
         [it, it * 20]
       color: \orange
 
-## the right hand side is what goes in the presentation layer
+## Presentation snippet
 func = plot histogram `with-options` {
     margin:
         left: 80

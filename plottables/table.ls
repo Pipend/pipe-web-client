@@ -33,7 +33,7 @@ module.exports = ({Plottable, nv, plot-chart, plot}) -> new Plottable do
                     ..each ([key, value]) -> 
                         f = cells[key]
                         if !!f
-                            (plot f) @, value
+                            plot f, @, value, {}
                         else
                             cell @, key, value
 

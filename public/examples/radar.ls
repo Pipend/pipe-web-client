@@ -1,5 +1,5 @@
 _ <- id
-## this is the data structure required by funnel
+## Data structure required by funnel
 ## data :: [{name :: String, size :: Number}]
 data = [
   * axes:
@@ -34,7 +34,8 @@ data = [
         value: 3048
 ]
     
-## the right hand side is what goes in the presentation layer
+## Presentation snippet
+
 func = plot radar
 
 [data, func]

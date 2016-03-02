@@ -1,10 +1,12 @@
-## this is the data structure required by timeseries
-''' 
+_ <- id
+/*
+Data structure required by timeseries:
+
 data :: [{
     key :: String
     values :: [[Number, Number]]
 }]
-'''
+*/
 data = 
     * key: \square
       values: [0 til 30] |> map -> 
@@ -14,7 +16,8 @@ data =
         [Date.now! + (it * 86400000), it * 20]
       color: \orange
 
-## the right hand side is what goes in the presentation layer
+## Presentation snipppet
+
 func = plot timeseries `with-options` {
     margin:
         left: 80

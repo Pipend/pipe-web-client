@@ -1,10 +1,12 @@
-## this is the data structure required by stacked-area
-''' 
+_ <- id
+/* 
+Data structure required by stacked-area
+
 data :: [{
     key :: String
     values :: [[Number, Number]]
 }]
-'''
+*/
 data = 
     * key: \company1
       values: [0 til 30] |> map -> 
@@ -14,7 +16,8 @@ data =
         [Date.now! + (it * 86400000), it * it]
       color: \orange
 
-## the right hand side is what goes in the presentation layer
+## Presentation snippet
+
 func = plot stacked-area `with-options` {
     use-interactive-guideline: true
     show-controls: true

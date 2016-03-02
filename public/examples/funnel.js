@@ -1,5 +1,5 @@
 _ => {
-  // this is the data structure required by funnel
+  // Data structure required by funnel
   // data :: [{name :: String, size :: Number}]
   const data = [
     {
