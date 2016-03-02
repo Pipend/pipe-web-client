@@ -13,17 +13,18 @@ module.exports = React.create-class do
     get-default-props: ->
         # width :: Int
         # height :: Int
-        # initial-language-abbr :: String
+        # language-abbr :: String
         languages: [] # :: [{abbr :: String, title :: String, initial-content :: String, compile :: String -> String}]
         style: {}
 
     # render :: a -> VirtualDOMElement
     render: -> 
-        {selected-language-abbr} = @state
+        selected-language-abbr = @props.language-abbr
 
         ace-mode = match selected-language-abbr
             | \ls => \livescript
             | \js => \javascript
+            | \babel => \javascript
             | _ => selected-language-abbr
 
         div do 
@@ -52,8 +53,8 @@ module.exports = React.create-class do
                                 key: abbr
                                 class-name: if abbr == selected-language-abbr then \selected else ''
                                 on-click: ~> 
-                                    <~ @set-state selected-language-abbr: abbr
-                                    @execute!
+                                    @props.on-language-abbr-changed abbr
+                                    
                                 "#{title}#{if abbr == selected-language-abbr then ' - live editor' else ''}"
 
                     # CODE EDITOR
@@ -98,7 +99,7 @@ module.exports = React.create-class do
             |> map ({abbr, initial-content}) -> [abbr, initial-content]
             |> pairs-to-obj
             |> ~> it <<< 
-                selected-language-abbr: @props.initial-language-abbr
+                selected-language-abbr: @props.language-abbr
 
     # execute :: a -> Void
     execute: !-> 
@@ -107,24 +108,28 @@ module.exports = React.create-class do
         view = find-DOM-node @refs.presentation
             ..innerHTML = ""
 
-        [err, result]? = compile-presentation-sync do 
-            @state[@state.selected-language-abbr]
-            match @state.selected-language-abbr
+        [err, f]? = compile-presentation-sync do 
+            @state[@props.language-abbr]
+            match @props.language-abbr
                 | \ls => \livescript
                 | \js => \javascript
-                | _ => @state.selected-language-abbr
+                | _ => @props.language-abbr
         
         if !!err 
             @set-state err: "COMPILATION ERROR : #{err.to-string!}"
 
         else
             try 
-                [data, presentation-function] = result
+                [data, presentation-function] = f!
                 presentation-function view, data, {x: 1, y: 1} # dummy params for testing
             catch err 
                 @set-state err: "EXECUTION ERROR : #{err.to-string!}"
 
+    component-did-update: (prev-props) !-> 
+        if prev-props.language-abbr != @props.language-abbr
+            @execute!
+
     # component-did-mount :: a -> Void
     component-did-mount: !-> 
         @execute!
-        @debounced-execute = debounce @execute, 750
+        @debounced-execute = debounce @execute, 750 # when typing

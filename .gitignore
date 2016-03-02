@@ -8,3 +8,4 @@
 rough
 coverage/
 node_modules/
+!public/examples/*.js

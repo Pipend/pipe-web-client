@@ -41,7 +41,7 @@
     "prelude-extension": "latest",
     "prelude-ls": "^1.1.2",
     "radar-chart-d3": "git+https://github.com/roeierez/radar-chart-d3.git",
-    "transpilation": "latest",
+    "transpilation": "^0.1.2",
     "whatwg-fetch": "^0.10.1"
   },
   "peerDependencies": {

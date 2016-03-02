@@ -1,11 +1,13 @@
-## this is the data structure required by regression
+_ <- id
+## Data structure required by regression
 ## data :: [{x :: Number, y :: Number, size :: Int}]
 data = [0 til 15] |> map -> 
     x: Math.floor Math.random! * 100
     y: Math.floor Math.random! * 100
     size: it
 
-## the right hand side is what goes in the presentation layer
+## Presentation snippet
+
 func = plot regression `with-options` {
     margin:
         top: 40

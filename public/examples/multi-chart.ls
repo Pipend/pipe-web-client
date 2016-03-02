@@ -1,12 +1,14 @@
-## this is the data structure required by timeseries
-''' 
+_ <- id
+/*
+Data structure required by timeseries
+
 data :: [{
     type :: String
     y-axis :: Int
     key :: String
     values :: [[Number, Number]]
 }]
-'''
+*/
 data = 
     * type: \bar
       y-axis: 1
@@ -22,7 +24,8 @@ data =
         [Date.now! + (it * 86400000), it * 20]
       color: \orange
 
-## the right hand side is what goes in the presentation layer
+## Presentation snippet
+
 func = plot multi-chart `with-options` {
     margin:
         left: 80
