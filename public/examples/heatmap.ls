@@ -1,13 +1,12 @@
 _ <- id
 
-points = [0 til 100]
-    |> map ->
-        x: Math.random! * 850
-        y: Math.random! * 300
-        value: Math.random! * 30
+points = [0 til 100] |> map ->
+    x: floor Math.random! * 850
+    y: floor Math.random! * 300
+    value: Math.random! * 30
 
-## Data structure required by heatmap
-'''
+/*
+Data structure required by heatmap
 data :: {
     max :: Number
     data :: [{
@@ -16,7 +15,7 @@ data :: {
         value :: Number
     }]
 }
-'''
+*/
 data =
     max: points 
         |> map (.value) 
