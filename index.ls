@@ -1,4 +1,5 @@
 require! \base62
+require! \querystring
 {keys, last, map, Str} = require \prelude-ls
 {is-equal-to-object} = require \prelude-extension
 require! \./presentation-context
@@ -9,148 +10,91 @@ require! \./presentation-context
 (require \es6-promise).polyfill!
 require \isomorphic-fetch 
 
-# process-response :: Response -> p a
-process-response = ({ok}:res) ->
-    if !ok then 
-        res.text!.then (text) -> throw text
-    else
-        res.json!
+# bind-p :: p a -> (a -> p b) -> p b
+bind-p = (p, f) --> p.then f
 
-# get-json :: String -> p result
-get-json = (url) -> 
-    fetch url .then process-response
+# return-p :: a -> p a
+return-p = Promise.resolve
 
-# post-json :: String -> object -> p result
-post-json = (url, json) --> 
-    (fetch do 
-        url
-        method: \POST
-        headers: 'Content-Type' : \application/json
-        body: JSON.stringify json) .then process-response
-        
-module.exports = web-client = ({end-point}:config) ->
+# :: Url -> ProjectId -> API
+module.exports = web-client = (end-point, project-id) --> 
 
-    # compile-document :: Document -> p {execute, transformation-function, presentation-function}
-    compile-document = do ->
+    # fetch-with-options :: String -> object -> p result
+    fetch-with-options = (url, options) ->
+        default-options = 
+            credentials: \same-origin
+            headers: \Content-Type : \application/json
 
-        cache = {}
+        {ok}:res <- bind-p (fetch "#{end-point}/apis/#{url}", {} <<< default-options <<< options)
+        if !ok then 
+            res.text!.then (text) -> throw text
+        else
+            res.json!
 
-        ({
-            query-id
-            data-source-cue
-            query
-            client-external-libs
-            transpilation
-            transformation
-            presentation
-        }:document?) ->
+    # get-json :: String -> p result
+    get-json = (url) -> 
+        fetch-with-options url, method: \GET
 
-            return Promise.resolve cache[query-id] if !!cache[query-id]
+    # post-json :: String -> object -> p result
+    post-json = (url, json) --> 
+        fetch-with-options do 
+            url
+            method: \POST
+            body: JSON.stringify json
 
-            # load the dependencies
-            <- require-deps (client-external-libs ? []) .then _
-
-            # transformation-function :: result -> Parameters -> result
-            transformation-function <- compile-transformation transformation, transpilation.transformation .then _
-
-            # presentation-function :: DOMElement -> result -> Parameters -> DOM()
-            presentation-function <- compile-presentation presentation, transpilation.presentation .then _
-        
-            cache[query-id] = 
-
-                document: document
-
-                # execute :: Boolean -> Parameters -> p result
-                execute: (cache, compiled-parameters) --> 
-
-                    op-info = {document}
-
-                    {result}? <- (execute do 
-                        data-source-cue
-                        query
-                        transpilation.query
-                        compiled-parameters
-                        cache
-                        generate-uid!
-                        op-info) .then _
-                    result
-
-                # transform :: result -> Parameters -> p result
-                transformation-function: transformation-function
-
-                # presentation-function :: Parameters -> DOMElement -> result -> Void
-                presentation-function: presentation-function
-
-    # compile-query :: String -> p {execute, transformation-function, presentation-function}
-    compile-query = do ->
-        cache = {}
-        (query-id) ->
-            document <- (if !!cache[query-id] then Promise.resolve cache[query-id] else load-query query-id).then
-            compile-document cache[query-id] = document
-
-    # compile-latest-query :: String -> p {execute, transformation-function, presentation-function}
-    compile-latest-query = do ->
-        cache = {}
-        (branch-id) ->
-            document <- (if !!cache[branch-id] then Promise.resolve cache[branch-id] else load-latest-query branch-id).then
-            compile-document cache[branch-id] = document
-
-    # compile-presentation-sync :: String -> String -> [Error, (Parameters -> DOMElement -> result -> Void)]
-    compile-presentation-sync = (presentation, language) -> 
-        compile-and-execute-sync presentation, language, presentation-context!
-
-    # compile-presentation :: String -> String -> p (Parameters -> DOMEelement -> result -> Void)
-    compile-presentation = from-error-value-tuple compile-presentation-sync
-
-    # execute :: DataSourceCue -> String -> String -> Parameters -> Boolean -> String -> OpInfo -> p result
-    execute = do ->
+    # delete-fetch :: String -> p a
+    delete-fetch = (url) ->
+        fetch-with-options url, method: \DELETE
     
-        previous-call = null
-        
-        (data-source-cue, query, transpilation-language, compiled-parameters, cache, op-id, op-info) ->
-            
-            args = {data-source-cue, query, transpilation-language, compiled-parameters}
 
-            if !!cache and !!previous-call and (previous-call.args `is-equal-to-object` args)
-                new Promise (res, rej) ->
-                    {result, execution-end-time} = previous-call.result-with-metadata
-                    res {from-cache: true, execution-duration: 0, execution-end-time, result}
+    # ----------- projects -----------
 
-            else
-                (
-                    post-json "#{end-point}/apis/execute", {
-                        data-source-cue
-                        query
-                        transpilation-language
-                        compiled-parameters
-                        cache
-                        op-id
-                        op-info
-                    }
-                ) .then (result-with-metadata) -> 
-                    previous-call := {args, result-with-metadata}
-                    result-with-metadata
+    # get-projects :: String -> p [Project]
+    get-projects = (user-id) -> 
+        get-json "users/#{user-id}/projects"
 
-    # generate-uid :: a -> String
-    generate-uid = -> base62.encode Date.now!
-
-    # get-all-tags :: a -> p [String]
-    get-all-tags = -> 
-        get-json "#{end-point}/apis/tags"
+    # get-my-projects :: () -> p [Project]
+    get-my-projects = -> 
+        get-json "projects"
     
-    # load-default-document :: DatasourceCue -> String -> p Document
-    load-default-document = (data-source-cue, transpilation-language) -> 
-        post-json "#{end-point}/apis/defaultDocument", [data-source-cue, transpilation-language]
+
+    # ----------- data sources -----------
+
+    get-connections = (query-type, query-object = {}) -> 
+        get-json "projects/#{project-id}/queryTypes/#{query-type}/connections#{querystring.stringify query-object}"
+
+
+    # ----------- documents -----------
+
+    # :: Document -> String -> Int -> p Document
+    save-document = (document) ->
+        post-json "projects/#{project-id}/documents", document
+
+    # get-documents :: () -> p [Document]
+    get-documents = ->
+        get-json "projects/#{project-id}/documents"
+
+    # :: DatasourceCue -> String -> p Document
+    load-default-document = (data-source-cue, transpilation-language) --> 
+        post-json "projects/#{project-id}/defaultDocument", {data-source-cue, transpilation-language}
     
-    # load-query :: String -> p Document
-    load-query = (query-id) -> 
-        get-json "#{end-point}/apis/queries/#{query-id}"
+    # :: String -> Int -> p Document
+    load-document-version = (document-id, version) -->
+        get-json "projects/#{project-id}/documents/#{document-id}/versions/#{version}"
 
-    # load-latest-query :: String -> p Document
-    load-latest-query = (branch-id) -> 
-        get-json "#{end-point}/apis/branches/#{branch-id}" .then -> load-query it.0.latest-query.query-id
+    # :: String -> p Document
+    load-latest-document = (document-id) -> 
+        get-json "projects/#{project-id}/documents/#{document-id}" 
 
-    # require-deps :: [String] -> p [DOMElement]
+    # delete-document-version :: String -> Int -> p a
+    delete-document-version = (document-id, version) --> 
+        delete-fetch "projects/#{project-id}/documents/#{document-id}/versions/#{version}"
+    
+    # delete-document-and-history :: String -> p a
+    delete-document-and-hisotry = (document-id) -> 
+        delete-fetch "projects/#{project-id}/documents/#{document-id}"
+
+    # :: [String] -> p [DOMElement]
     require-deps = (client-external-libs) ->
 
         # add urls to head
@@ -174,22 +118,160 @@ module.exports = web-client = ({end-point}:config) ->
                     element.onload = ~> res url
                     document.head.append-child element
 
-    # save-document :: Document -> p Document
-    save-document = post-json "#{end-point}/apis/save"
-    
+
+    # ----------- execution -----------
+
+    execute = do ->
+        previous-call = null
+
+        (
+            task-id # :: String
+            display # :: Display
+            
+            # document-id & version are used for security purposes 
+            # to prevent guest user from executing changes to existing documents
+            document-id # :: String
+            version # :: Int
+            
+            data-source-cue # :: {queryType :: String, connectionKind :: String, connectionName :: String, ...}
+            query # :: String
+            transpilation-language # :: String
+            compiled-parameters # :: object
+            cache # :: Boolean
+        ) ->
+
+            args = {data-source-cue, query, transpilation-language, compiled-parameters}
+
+            if cache and previous-call and (args `is-equal-to-object` previous-call.args)
+                {result, execution-end-time} = previous-call.result-with-metadata
+                return-p do 
+                    from-cache: true
+                    execution-duration: 0
+                    execution-end-time: execution-end-time
+                    result: result
+
+            else
+                result-with-metadata <- bind-p do 
+                    post-json do 
+                        "projects/#{project-id}/documents/#{document-id}/versions/#{version}/execute"
+                        {
+                            task-id
+                            display
+                            data-source-cue
+                            query
+                            transpilation-language
+                            compiled-parameters
+                            cache
+                        }
+                previous-call := {args, result-with-metadata}
+                result-with-metadata
+
+
+    # ----------- storyboard -----------
+
+    # generate-uid :: () -> String
+    generate-uid = -> 
+        base62.encode Date.now!
+
+    # :: Document -> p {execute, transformation-function, presentation-function}
+    compile-document1 = do ->
+
+        cache = {}
+
+        ({
+            document-id
+            version
+            data-source-cue
+            query
+            client-external-libs
+            transpilation
+            transformation
+            presentation
+        }:document?) ->
+
+            cache-key = "#{document-id}-#{version}"
+
+            if cache[cache-key]
+                Promise.resolve cache[cache-key] 
+
+            else
+
+                # load the dependencies
+                <- require-deps (client-external-libs ? []) .then _
+
+                # transformation-function :: result -> Parameters -> result
+                transformation-function <- compile-transformation transformation, transpilation.transformation .then _
+
+                # presentation-function :: DOMElement -> result -> Parameters -> DOM()
+                presentation-function <- compile-presentation presentation, transpilation.presentation .then _
+            
+                cache[cache-key] = 
+
+                    document: document
+
+                    # execute :: Boolean -> Parameters -> p result
+                    execute: (cache, compiled-parameters) --> 
+
+                        op-info = {document}
+                        
+                        # TODO: call execute with projectId
+                        {result}? <- (execute do 
+                            data-source-cue
+                            query
+                            transpilation.query
+                            compiled-parameters
+                            cache
+                            generate-uid!
+                            op-info) .then _
+                        result
+
+                    # transform :: result -> Parameters -> p result
+                    transformation-function: transformation-function
+
+                    # presentation-function :: Parameters -> DOMElement -> result -> Void
+                    presentation-function: presentation-function
+
+    # :: (DocumentId :: String) -> p {execute, transformation-function, presentation-function}
+    compile-document = do ->
+        (document-id, version) ->
+            document <- bind-p (load-document-version document-id, version)
+            compile-document1 document
+
+    # :: String -> p {execute, transformation-function, presentation-function}
+    compile-latest-document = do ->
+        cache = {}
+        (document-id) ->
+            document <- bind-p load-latest-document document-id
+            compile-document1 cache[cache-key] = document
+
+
+    # ----------- presentation -----------
+
+    # compile-presentation-sync :: String -> String -> [Error, (Parameters -> DOMElement -> result -> Void)]
+    compile-presentation-sync = (presentation, language) -> 
+        compile-and-execute-sync presentation, language, presentation-context!
+
+    # compile-presentation :: String -> String -> p (Parameters -> DOMEelement -> result -> Void)
+    compile-presentation = from-error-value-tuple compile-presentation-sync
+
+
     {} <<< transpilation <<< pipe-transformation <<< {
-        compile-presentation
-        compile-presentation-sync
-        compile-document
-        compile-query
-        compile-latest-query
-        execute
-        get-all-tags
-        generate-uid
-        load-default-document
-        load-latest-query
-        load-query
-        require-deps
+        get-projects
+        get-my-projects
+        get-connections
         save-document
+        get-documents
+        load-default-document
+        load-document-version
+        load-latest-document
+        delete-document-version
+        delete-document-and-hisotry
+        require-deps
+        execute
+        generate-uid
+        compile-document
+        compile-latest-document
+        compile-presentation-sync
+        compile-presentation
     }
 
