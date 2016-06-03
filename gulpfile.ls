@@ -98,3 +98,4 @@ gulp.task \watch:src, <[watch:src:styles watch:src:scripts]>
 gulp.task \build:examples, <[build:examples:styles build:examples:scripts]>
 gulp.task \watch:examples, <[watch:examples:styles watch:examples:scripts]>
 gulp.task \default, <[dev:server build:src watch:src build:examples watch:examples]>
+gulp.task \build, <[build:src]>
