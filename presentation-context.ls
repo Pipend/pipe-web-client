@@ -81,7 +81,7 @@ json = (view, result) ->
 
 # csv :: View -> result -> DOM()
 csv = (view, result) ->
-    columns = keys result.0
+    columns = Obj.keys result.0
     (columns.join \,) + "\n" + do ->
         result
         |> foldl do
