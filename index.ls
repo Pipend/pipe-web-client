@@ -118,6 +118,10 @@ module.exports = web-client = (end-point, project-id) -->
                     element.onload = ~> res url
                     document.head.append-child element
 
+    # ----------- projects  -----------
+
+    save-project = (project) ->
+        post-json "projects", project
 
     # ----------- execution -----------
 
@@ -256,6 +260,7 @@ module.exports = web-client = (end-point, project-id) -->
 
 
     {} <<< transpilation <<< pipe-transformation <<< {
+        save-project
         get-projects
         get-my-projects
         get-connections
