@@ -45,6 +45,13 @@ module.exports = web-client = (end-point, project-id) -->
     # delete-fetch :: String -> p a
     delete-fetch = (url) ->
         fetch-with-options url, method: \DELETE
+
+    # put-json :: String -> object -> p a
+    put-json = (url, json) ->
+        fetch-with-options do
+            url
+            method: \PUT
+            body: JSON.stringify json
     
 
     # ----------- projects -----------
@@ -120,8 +127,14 @@ module.exports = web-client = (end-point, project-id) -->
 
     # ----------- projects  -----------
 
-    save-project = (project) ->
+    add-project = (project) ->
         post-json "projects", project
+
+    update-project = (project) ->
+        put-json "projects/#{project-id}", project
+
+    get-project = ->
+        get-json "projects/#{project-id}"
 
     # ----------- execution -----------
 
@@ -260,8 +273,9 @@ module.exports = web-client = (end-point, project-id) -->
 
 
     {} <<< transpilation <<< pipe-transformation <<< {
-        save-project
-        get-projects
+        add-project
+        update-project
+        get-project
         get-my-projects
         get-connections
         save-document
