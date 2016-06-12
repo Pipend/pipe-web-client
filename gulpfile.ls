@@ -66,7 +66,7 @@ gulp.task \watch:src:styles, ->
     gulp.watch <[./index.styl]>, <[build:src:styles]>
 
 gulp.task \build:src:scripts, ->
-    gulp.src <[./index.ls ./presentation-context.ls]>
+    gulp.src <[./index.ls ./exceptions.ls ./presentation-context.ls]>
     .pipe gulp-livescript!
     .pipe gulp.dest './'
 
@@ -75,7 +75,7 @@ gulp.task \build:src:scripts, ->
     .pipe gulp.dest './plottables'
 
 gulp.task \watch:src:scripts, ->
-    gulp.watch <[./index.ls ./presentation-context.ls ./plottables/*.ls]>, <[build:src:scripts]>
+    gulp.watch <[./index.ls ./exceptions.ls ./presentation-context.ls ./plottables/*.ls]>, <[build:src:scripts]>
 
 gulp.task \dev:server, ->
     gulp-connect.server do

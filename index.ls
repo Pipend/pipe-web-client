@@ -5,6 +5,7 @@ require! \querystring
 require! \./presentation-context
 {compile-transformation}:pipe-transformation = require \pipe-transformation
 {compile-and-execute-sync, from-error-value-tuple}:transpilation = require \transpilation
+{UnAuthorizedException, UnAuthenticatedException} = Exceptions = require \./exceptions
 
 # poly fill for promises and fetch API
 (require \es6-promise).polyfill!
@@ -27,7 +28,12 @@ module.exports = web-client = (end-point, project-id) -->
 
         {ok}:res <- bind-p (fetch "#{end-point}/apis/#{url}", {} <<< default-options <<< options)
         if !ok then 
-            res.text!.then (text) -> throw text
+            res.text!.then (text) -> 
+                match res.status
+                | 401 => throw new UnAuthenticatedException text
+                | 403 => throw new UnAuthorizedException text
+                | _   => throw new Error text
+                throw text
         else
             res.json!
 
@@ -292,5 +298,6 @@ module.exports = web-client = (end-point, project-id) -->
         compile-latest-document
         compile-presentation-sync
         compile-presentation
+        Exceptions
     }
 
