@@ -9,40 +9,40 @@ require! \react-router
 Link = create-factory react-router.Link
 Route = create-factory react-router.Route
 Router = create-factory react-router.Router
-Example = create-factory require \./Example.ls
+Example = create-factory require \./components/Example.ls
 
 examples =
-  * title: 'correlation-matrix'
+  * title: \correlation-matrix
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/correlation-matrix.ls, \utf8
         babel: fs.read-file-sync \public/examples/correlation-matrix.js, \utf8
-  * title: 'funnel'
+  * title: \funnel
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/funnel.ls, \utf8
         babel: fs.read-file-sync \public/examples/funnel.js, \utf8
-  * title: 'radar'
+  * title: \radar
     description: ""
     languages:
-        ls: fs.read-file-sync \public/examples/radar.ls, \utf8      
-        babel: fs.read-file-sync \public/examples/radar.js, \utf8      
-  * title: 'heatmap'
+        ls: fs.read-file-sync \public/examples/radar.ls, \utf8
+        babel: fs.read-file-sync \public/examples/radar.js, \utf8
+  * title: \heatmap
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/heatmap.ls, \utf8
         babel: fs.read-file-sync \public/examples/heatmap.js, \utf8
-  * title: 'histogram'
+  * title: \histogram
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/histogram.ls, \utf8
         babel: fs.read-file-sync \public/examples/histogram.js, \utf8
-  * title: 'histogram1'
+  * title: \histogram1
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/histogram1.ls, \utf8
         babel: fs.read-file-sync \public/examples/histogram1.js, \utf8
-  * title: 'multi-bar-horizontal'
+  * title: \multi-bar-horizontal
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/multi-bar-horizontal.ls, \utf8 
@@ -57,37 +57,37 @@ examples =
     languages:
         ls: fs.read-file-sync \public/examples/regression.ls, \utf8 
         babel: fs.read-file-sync \public/examples/regression.js, \utf8 
-  * title: "scatter"
+  * title: \scatter
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/scatter.ls, \utf8 
         babel: fs.read-file-sync \public/examples/scatter.js, \utf8 
-  * title: "scatter1"
+  * title: \scatter1
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/scatter1.ls, \utf8 
         babel: fs.read-file-sync \public/examples/scatter1.js, \utf8 
-  * title: "stacked-area"
+  * title: \stacked-area
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/stacked-area.ls, \utf8 
         babel: fs.read-file-sync \public/examples/stacked-area.js, \utf8 
-  * title: "table"
+  * title: \table
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/table.ls, \utf8 
         babel: fs.read-file-sync \public/examples/table.js, \utf8 
-  * title: "timeseries"
+  * title: \timeseries
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/timeseries.ls, \utf8 
         babel: fs.read-file-sync \public/examples/timeseries.js, \utf8 
-  * title: "timeseries1"
+  * title: \timeseries1
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/timeseries1.ls, \utf8
         babel: fs.read-file-sync \public/examples/timeseries1.js, \utf8
-  * title: "layout"
+  * title: \layout
     description: ""
     languages:
         ls: fs.read-file-sync \public/examples/layout.ls, \utf8 
@@ -98,33 +98,42 @@ App = create-class do
 
     display-name: \App
 
-    # get-default-props :: () -> Props
+    # :: () -> Props
     get-default-props: ->
         query: {}
 
-    # render :: () -> ReactElement
+    # :: () -> ReactElement
     render: -> 
-        # APP
-
-        default-snippets-lang = @props.location.query.lang ? \babel
+        default-language-abbr = @props.location.query.lang ? \babel
 
         div class-name: \app,
 
-            div class-name: 'languages',
-                [['ls', 'LiveScript'], ['babel', 'Babel']] |> map ([abbr, title]) ~>
-                    div do 
-                        key: abbr 
-                        input type: 'radio', name: 'language-abbr', id: abbr, checked: abbr == default-snippets-lang, on-change: ~>
-                            hash-history.replace do 
-                                pathname: @props.location.pathname
-                                query: {} <<< @props.location.query <<< {lang: abbr}
-                                state: @state
+            # LANGUAGES
+            div class-name: \languages,
+                [<[ls LiveScript]>, <[babel Babel]>] |> map ([abbr, title]) ~>
 
+                    # LANGUAGE
+                    div do 
+                        key: abbr
+
+                        # LANGUAGE RADIO BUTTON
+                        input do 
+                            type: \radio
+                            name: \language-abbr
+                            id: abbr
+                            checked: abbr == default-language-abbr
+                            on-change: ~>
+                                hash-history.replace do 
+                                    pathname: @props.location.pathname
+                                    query: {} <<< @props.location.query <<< {lang: abbr}
+                                    state: @state
+
+                        # LANGUAGE LABEL
                         label html-for: abbr, title
 
             # EXAMPLES
             div class-name: \examples,
-                examples |> map ({title, description, {jsx, ls}:languages}) ~>
+                examples |> map ({title, description, languages}) ~>
                     key = "#{title.to-lower-case!.replace /\s+/g, '_'}"
 
                     # EXAMPLE
@@ -136,8 +145,9 @@ App = create-class do
                         width: 850
                         style:
                             margin-bottom: 60
-                        language-abbr: @state[key] ? default-snippets-lang
-                        on-language-abbr-changed: (lang) ~> @set-state "#key": lang
+                        language-abbr: @state[key] ? default-language-abbr
+                        on-language-abbr-changed: (language-abbr) ~> 
+                            @set-state "#key": language-abbr
                         languages: languages
                             |> obj-to-pairs
                             |> map ([abbr, initial-content]) ->
@@ -148,7 +158,7 @@ App = create-class do
                                     | _ => abbr
                                 initial-content: initial-content
     
-    # scroll-to-example :: () -> Void
+    # :: () -> Void
     scroll-to-example: !->
         example-element = find-DOM-node @refs?[@props.location.query.example]
         if !!example-element
@@ -156,16 +166,19 @@ App = create-class do
             example-element.scroll-into-view!
 
     # external links
-    # component-did-mount :: () -> Void
-    component-did-mount: !-> @scroll-to-example!
+    # :: () -> Void
+    component-did-mount: !-> 
+        @scroll-to-example!
 
     # changing the query string manually, or clicking on a different example
-    # component-did-update :: Props -> Void
+    # :: Props -> Void
     component-did-update: (prev-props) !-> 
         if prev-props.location.query.example != @props.location.query.example
             @scroll-to-example!
 
-    get-initial-state: -> {}
+    # :: () -> UIState
+    get-initial-state: -> 
+        {}
 
 render do 
     Router do 

@@ -1,6 +1,6 @@
 {
   "name": "pipe-web-client",
-  "version": "0.0.14",
+  "version": "1.0.0",
   "description": "Web client for importing visualizations and analysis from Pipe",
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,26 @@
     "url": "https://github.com/pipend/pipe-web-client/issues"
   },
   "homepage": "https://github.com/pipend/pipe-web-client#readme",
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "brace": "global:ace",
+    "jquery-browserify": "global:$",
+    "transpilation": "global:transpilation",
+    "pipe-transformation": "global:pipeTransformation",
+    "d3": "global:d3",
+    "d3-tip": {"depends": ["d3"], "exports": null},
+    "nvd3": "global:nv",
+    "es6-promise": "global:ES6Promise",
+    "prelude-extension": "global:preludeExtension",
+    "react": "global:React",
+    "react-dom": "global:ReactDOM",
+    "react-router": "global:ReactRouter",
+    "pipe-transformation/transformation-context": "global:transformationContext"
+  },
   "dependencies": {
     "base62": "^1.1.0",
     "d3": "^3.5.12",
@@ -37,8 +57,8 @@
     "jquery-browserify": "^1.8.1",
     "moment": "^2.10.6",
     "nvd3": "^1.8.1",
-    "pipe-transformation": "latest",
-    "prelude-extension": "latest",
+    "pipe-transformation": "^0.0.6",
+    "prelude-extension": "^0.0.13",
     "prelude-ls": "^1.1.2",
     "radar-chart-d3": "git+https://github.com/roeierez/radar-chart-d3.git",
     "transpilation": "^0.1.2",
@@ -51,7 +71,8 @@
   "devDependencies": {
     "brace": "git+https://github.com/furqanZafar/brace.git",
     "brfs": "^1.4.2",
-    "browserify": "^12.0.1",
+    "browserify": "^12.0.2",
+    "browserify-shim": "^3.8.12",
     "coveralls": "^2.11.6",
     "gulp": "^3.9.0",
     "gulp-connect": "^2.3.1",

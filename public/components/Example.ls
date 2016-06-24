@@ -1,16 +1,16 @@
 {filter, find, map, pairs-to-obj} = require \prelude-ls
-{create-factory, DOM:{div, span}}:React = require \react
+{create-class, create-factory, DOM:{div, span}}:React = require \react
 {find-DOM-node} = require \react-dom
-AceEditor = create-factory require \AceEditor.ls
+AceEditor = create-factory require \./AceEditor.ls
 {debounce} = require \underscore
-{compile-presentation-sync}:pipe-web-client = (require \../../index.ls) end-point: ""
+{compile-presentation-sync}:pipe-web-client = (require \../../index.ls) "", ""
 
-module.exports = React.create-class do
+module.exports = create-class do
 
     display-name: \Example
 
     # get-default-props :: a -> Props
-    get-default-props: ->
+    get-default-props: -> 
         # width :: Int
         # height :: Int
         # language-abbr :: String

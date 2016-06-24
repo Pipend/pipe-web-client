@@ -1,10 +1,4 @@
 ace = require \brace
-require \brace/ext/language_tools
-require \brace/ext/searchbox
-require \brace/mode/javascript
-require \brace/mode/jsx
-require \brace/mode/livescript
-require \brace/theme/chrome
 {each} = require \prelude-ls
 {DOM:{div}}:React = require \react
 
