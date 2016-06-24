@@ -107,31 +107,25 @@ gulp.task \watch:src:scripts, ->
         <[build:src:scripts]>
 
 gulp.task \dist, <[build:src:scripts]>, ->
-    [
-        <[./index pipeWebClient]>
-        <[./presentation-context presentationContext]>
-    ] |> each ([file-name, export-name]) ->
-        browserify standalone: export-name, debug: false
-            .add "#{file-name}.js"
-            .exclude \prelude-ls
-            .exclude \prelude-extension
-            .exclude \jquery-browserify
-            .exclude \transpilation
-            .exclude \pipe-transformation
-            .exclude \d3
-            .exclude \d3-tip
-            .exclude \nvd3
-            .exclude \es6-promise
-            .exclude \prelude-extension
-            .exclude \react
-            .exclude \react-dom
-            .exclude \react-router
-            .exclude \pipe-transformation/transformation-context
-            .exclude \./presentation-context
-            .bundle!
-            .pipe source "#{file-name}.min.js"
-            .pipe (gulp-streamify gulp-uglify!)
-            .pipe gulp.dest \./dist
+    browserify standalone: \pipeWebClient, debug: false
+        .add "index.js"
+        .exclude \prelude-ls
+        .exclude \prelude-extension
+        .exclude \jquery-browserify
+        .exclude \transpilation
+        .exclude \pipe-transformation
+        .exclude \d3
+        .exclude \nvd3
+        .exclude \es6-promise
+        .exclude \prelude-extension
+        .exclude \react
+        .exclude \react-dom
+        .exclude \react-router
+        .exclude \pipe-transformation/transformation-context
+        .bundle!
+        .pipe source "index.min.js"
+        .pipe (gulp-streamify gulp-uglify!)
+        .pipe gulp.dest \./dist
 
 gulp.task \dev:server, ->
     gulp-connect.server do

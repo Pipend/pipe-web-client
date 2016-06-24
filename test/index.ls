@@ -139,13 +139,11 @@ global <<<
     document: jsdom.jsdom '<!doctype html><html><body></body></html>'
     navigator: user-agent: \JSDOM
     window: document.parent-window
-
-Promise = require \bluebird
 {is-equal-to-object} = require \prelude-extension
 {
     load-query, load-latest-query, load-default-document, get-all-tags,
     execute, compile-query, compile-latest-query, save-document
-} = (require \../index.ls) end-point: \http://pipe.com
+} = (require \../index.ls) \http://pipe.com, ""
 
 pretty = -> JSON.stringify it, null, 4
 

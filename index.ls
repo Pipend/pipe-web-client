@@ -18,7 +18,7 @@ bind-p = (p, f) --> p.then f
 return-p = Promise.resolve
 
 # :: Url -> ProjectId -> API
-module.exports = web-client = (end-point, project-id) --> 
+module.exports = (end-point, project-id) --> 
 
     # fetch-with-options :: String -> object -> p result
     fetch-with-options = (url, options) ->
