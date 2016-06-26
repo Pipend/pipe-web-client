@@ -1,6 +1,6 @@
 {
   "name": "pipe-web-client",
-  "version": "2.0.0",
+  "version": "4.0.0",
   "description": "Web client for importing visualizations and analysis from Pipe",
   "main": "index.js",
   "scripts": {
@@ -56,11 +56,11 @@
     "jquery-browserify": "^1.8.1",
     "moment": "^2.10.6",
     "nvd3": "^1.8.1",
-    "pipe-transformation": "^0.0.6",
+    "pipe-transformation": "^3.0.0",
     "prelude-extension": "^0.0.13",
     "prelude-ls": "^1.1.2",
     "radar-chart-d3": "git+https://github.com/roeierez/radar-chart-d3.git",
-    "transpilation": "^0.1.2",
+    "transpilation": "^2.0.0",
     "whatwg-fetch": "^0.10.1"
   },
   "peerDependencies": {
