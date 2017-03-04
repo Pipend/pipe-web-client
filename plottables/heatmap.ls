@@ -1,6 +1,6 @@
 {map, id} = require \prelude-ls
 $ = require \jquery-browserify
-h337 = require \heatmap.js/heatmap.min.js
+h337 = require \/heatmap.js/build/heatmap.min.js
 
 module.exports = ({Plottable}) -> new Plottable do 
     (view, result, {width, height, background}, continuation) !-->
